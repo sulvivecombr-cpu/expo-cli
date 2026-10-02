@@ -32,4 +32,4 @@ curl -s http://localhost:3000/ | head -20               # should return HTML
 docker compose -f docker-compose.base44.yml logs dev-tools # check for errors
 ```
 
-The page loads the Expo dev-tools UI. GraphQL queries return empty data since no real Expo project is running — this is expected.
+The preview uses a minimal dummy Expo project, not a runnable mobile application. Its `package.json` and `app.json` must both exist: without `package.json`, the GraphQL config resolver returns null and ProjectManager renders nothing (a black screen). Check the actual container startup command if those files are missing; `docker compose restart` does not apply Compose command changes. Use `docker compose -f docker-compose.base44.yml up -d --build` to recreate stale containers. Verify the browser displays the Metro Bundler sidebar; HTTP 200 alone does not establish a working UI. Metro still cannot bundle the dummy project without its mobile dependencies.
