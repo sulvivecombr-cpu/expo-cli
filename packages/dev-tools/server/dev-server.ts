@@ -3,7 +3,6 @@ import openBrowserAsync from 'better-opn';
 import express from 'express';
 import http from 'http';
 import next from 'next';
-import { Project } from 'xdl';
 
 import { createAuthenticationContextAsync, startGraphQLServer } from './DevToolsServer';
 
@@ -42,6 +41,7 @@ async function run(): Promise<void> {
     startGraphQLServer(projectRoot, httpServer, authenticationContext);
     console.log('Starting project...');
     try {
+      const { Project } = await import('xdl');
       await Project.startAsync(projectRoot);
     } catch (error) {
       console.warn('Could not start project bundler:', error?.message || error);
