@@ -1,0 +1,11 @@
+{
+  "expo": {
+    "name": "Chat App",
+    "slug": "chat-app",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "assetBundlePatterns": ["**/*"],
+    "sdkVersion": "49.0.0"
+  }
+}

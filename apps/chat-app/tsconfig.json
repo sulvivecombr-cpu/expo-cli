@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "target": "esnext",
+    "module": "commonjs",
+    "jsx": "react-jsx",
+    "lib": ["esnext", "dom"],
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "noEmit": true,
+    "resolveJsonModule": true,
+    "strict": true,
+    "baseUrl": "."
+  },
+  "include": ["App.tsx", "src/**/*", "web/**/*"]
+}
