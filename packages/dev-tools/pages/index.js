@@ -186,6 +186,9 @@ class IndexPageContents extends React.Component {
   _handleHostTypeClick = hostType => State.setHostType({ hostType }, this.props);
   _handlePublishProject = options => State.publishProject(options, this.props);
   _handleToggleProductionMode = () => {
+    if (!this.props.data.currentProject || !this.props.data.currentProject.settings) {
+      return;
+    }
     const dev = !this.props.data.currentProject.settings.dev;
     State.setBuildFlags({ dev, minify: !dev }, this.props);
   };
@@ -207,6 +210,9 @@ class IndexPageContents extends React.Component {
   _handleClearMessages = source => State.clearMessages({ source }, this.props);
 
   componentDidMount() {
+    if (!this.props.data.currentProject || !this.props.data.currentProject.messages) {
+      return;
+    }
     if (this.props.data.userSettings.sendTo) {
       this._handleUpdateState({
         recipient: this.props.data.userSettings.sendTo,
@@ -375,7 +381,7 @@ class IndexPageContents extends React.Component {
   }
 
   updateTitle() {
-    if (this.props.data) {
+    if (this.props.data && this.props.data.currentProject && this.props.data.currentProject.config) {
       const { name } = this.props.data.currentProject.config;
       const unreadCount = this.getTotalUnreadCount();
       let title;
@@ -443,6 +449,9 @@ class IndexPageContents extends React.Component {
 }
 
 function getSections(currentProject, projectManagerLayout) {
+  if (!currentProject || !currentProject.sources) {
+    return { sections: [], sources: [] };
+  }
   const sources = currentProject.sources.filter(source => {
     return source.__typename !== 'Issues' || source.messages.count > 0;
   });

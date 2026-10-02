@@ -7,7 +7,7 @@ import { Project } from 'xdl';
 
 import { createAuthenticationContextAsync, startGraphQLServer } from './DevToolsServer';
 
-const PORT = 3333;
+const PORT = Number(process.env.PORT) || 3000;
 
 async function run(): Promise<void> {
   try {
@@ -37,14 +37,17 @@ async function run(): Promise<void> {
     await new Promise((resolve, reject) => {
       httpServer.once('error', reject);
       httpServer.once('listening', resolve);
-      httpServer.listen(PORT, 'localhost');
+      httpServer.listen(PORT, '0.0.0.0');
     });
     startGraphQLServer(projectRoot, httpServer, authenticationContext);
     console.log('Starting project...');
-    await Project.startAsync(projectRoot);
-    const url = `http://localhost:${PORT}`;
+    try {
+      await Project.startAsync(projectRoot);
+    } catch (error) {
+      console.warn('Could not start project bundler:', error?.message || error);
+    }
+    const url = `http://0.0.0.0:${PORT}`;
     console.log(`Development server running at ${url}`);
-    openBrowserAsync(url);
   } catch (error) {
     console.error(error);
     process.exit(1);

@@ -139,6 +139,10 @@ class ProjectManager extends React.Component {
       return null;
     }
 
+    if (!this.props.project || !this.props.project.config) {
+      return null;
+    }
+
     const toolbarElements = (
       <ProjectManagerToolbar
         title={this.props.project.config.name}

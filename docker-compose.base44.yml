@@ -1,0 +1,36 @@
+services:
+  dev-tools:
+    image: node:16-bullseye
+    working_dir: /app
+    volumes:
+      - ./:/app
+      - dev_tools_node_modules:/app/node_modules
+    environment:
+      - PORT=3000
+      - BASE44_PUBLIC_HOST_SUFFIX=${BASE44_PUBLIC_HOST_SUFFIX}
+    ports:
+      - "3000:3000"
+    command:
+      - sh
+      - -ec
+      - |
+        cd /app
+        yarn install --ignore-scripts
+        if [ ! -f packages/xdl/build/index.js ]; then
+          node_modules/.bin/lerna run prepare --scope xdl --include-filtered-dependencies --stream
+        fi
+        mkdir -p /tmp/dummy-project
+        printf '{"name":"dummy-project","version":"1.0.0","main":"index.js"}' > /tmp/dummy-project/package.json
+        printf '{"expo":{"name":"Dummy Project","slug":"dummy-project","sdkVersion":"44.0.0"}}' > /tmp/dummy-project/app.json
+        cd packages/dev-tools
+        exec yarn dev /tmp/dummy-project
+    healthcheck:
+      test: ["CMD", "node", "-e", "require('http').get('http://localhost:3000/', r => process.exit(r.statusCode < 500 ? 0 : 1)).on('error', () => process.exit(1))"]
+      interval: 15s
+      timeout: 5s
+      retries: 6
+      start_period: 900s
+    restart: on-failure
+
+volumes:
+  dev_tools_node_modules:

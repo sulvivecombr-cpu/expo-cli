@@ -35,9 +35,17 @@ export async function createAuthenticationContextAsync({ port }: { port: number 
   const clientAuthenticationToken = await generateSecureRandomTokenAsync();
   const endpointUrlToken = await generateSecureRandomTokenAsync();
   const graphQLEndpointPath = `/${endpointUrlToken}/graphql`;
-  const hostname = `${devtoolsGraphQLHost()}:${port}`;
-  const webSocketGraphQLUrl = `ws://${hostname}${graphQLEndpointPath}`;
-  const allowedOrigin = `http://${hostname}`;
+  let webSocketGraphQLUrl: string;
+  let allowedOrigin: string;
+  if (process.env.BASE44_PUBLIC_HOST_SUFFIX) {
+    const publicHost = `3000-${process.env.BASE44_PUBLIC_HOST_SUFFIX}`;
+    webSocketGraphQLUrl = `wss://${publicHost}${graphQLEndpointPath}`;
+    allowedOrigin = `https://${publicHost}`;
+  } else {
+    const hostname = `${devtoolsGraphQLHost()}:${port}`;
+    webSocketGraphQLUrl = `ws://${hostname}${graphQLEndpointPath}`;
+    allowedOrigin = `http://${hostname}`;
+  }
   return {
     clientAuthenticationToken,
     graphQLEndpointPath,
